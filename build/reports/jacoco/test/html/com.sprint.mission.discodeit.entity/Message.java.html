@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Message.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.entity</a> &gt; <span class="el_source">Message.java</span></div><h1>Message.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.entity;
+
+import com.sprint.mission.discodeit.entity.base.BaseUpdatableEntity;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = &quot;messages&quot;)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Message extends BaseUpdatableEntity {
+
+    @Column(columnDefinition = &quot;text&quot;, nullable = false)
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;channel_id&quot;, columnDefinition = &quot;uuid&quot;)
+    private Channel channel;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;author_id&quot;, columnDefinition = &quot;uuid&quot;)
+    private User author;
+
+<span class="nc" id="L30">    @BatchSize(size = 100)</span>
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = &quot;message_attachments&quot;,
+            joinColumns = @JoinColumn(name = &quot;message_id&quot;)
+    )
+    private List&lt;BinaryContent&gt; attachments = new ArrayList&lt;&gt;();
+
+<span class="nc" id="L38">    public Message(String content, Channel channel, User author, List&lt;BinaryContent&gt; attachments) {</span>
+<span class="nc" id="L39">        this.content = content;</span>
+<span class="nc" id="L40">        this.channel = channel;</span>
+<span class="nc" id="L41">        this.author = author;</span>
+<span class="nc" id="L42">        this.attachments = attachments;</span>
+<span class="nc" id="L43">    }</span>
+
+    public void update(String newContent) {
+<span class="nc bnc" id="L46" title="All 4 branches missed.">        if (newContent != null &amp;&amp; !newContent.equals(this.content)) {</span>
+<span class="nc" id="L47">            this.content = newContent;</span>
+        }
+<span class="nc" id="L49">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

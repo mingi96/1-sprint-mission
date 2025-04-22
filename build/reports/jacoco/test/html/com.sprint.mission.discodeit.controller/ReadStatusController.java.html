@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReadStatusController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.controller</a> &gt; <span class="el_source">ReadStatusController.java</span></div><h1>ReadStatusController.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.controller;
+
+import com.sprint.mission.discodeit.controller.api.ReadStatusApi;
+import com.sprint.mission.discodeit.dto.data.ReadStatusDto;
+import com.sprint.mission.discodeit.dto.request.ReadStatusCreateRequest;
+import com.sprint.mission.discodeit.dto.request.ReadStatusUpdateRequest;
+import com.sprint.mission.discodeit.entity.ReadStatus;
+import com.sprint.mission.discodeit.service.ReadStatusService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(&quot;/api/readStatuses&quot;)
+<span class="fc" id="L22">@Slf4j</span>
+public class ReadStatusController implements ReadStatusApi {
+
+  private final ReadStatusService readStatusService;
+
+  @PostMapping
+  public ResponseEntity&lt;ReadStatusDto&gt; create(@Valid @RequestBody ReadStatusCreateRequest request) {
+<span class="nc" id="L29">    log.info(&quot;읽음 상태 생성 요청: {}&quot;, request);</span>
+
+<span class="nc" id="L31">    ReadStatusDto createdReadStatus = readStatusService.create(request);</span>
+<span class="nc" id="L32">    log.debug(&quot;읽음 상태 생성 응답: {}&quot;, createdReadStatus);</span>
+<span class="nc" id="L33">    return ResponseEntity</span>
+<span class="nc" id="L34">        .status(HttpStatus.CREATED)</span>
+<span class="nc" id="L35">        .body(createdReadStatus);</span>
+  }
+
+  @PatchMapping(path = &quot;{readStatusId}&quot;)
+  public ResponseEntity&lt;ReadStatusDto&gt; update(
+      @PathVariable(&quot;readStatusId&quot;) UUID readStatusId,
+      @RequestBody @Valid ReadStatusUpdateRequest request) {
+<span class="nc" id="L42">    log.info(&quot;읽음 상태 수정 요청: id={}, request={}&quot;, readStatusId, request);</span>
+<span class="nc" id="L43">    ReadStatusDto updatedReadStatus = readStatusService.update(readStatusId, request);</span>
+<span class="nc" id="L44">    log.debug(&quot;읽음 상태 수정 응답: {}&quot;, updatedReadStatus);</span>
+<span class="nc" id="L45">    return ResponseEntity</span>
+<span class="nc" id="L46">        .status(HttpStatus.OK)</span>
+<span class="nc" id="L47">        .body(updatedReadStatus);</span>
+  }
+
+  @GetMapping
+  public ResponseEntity&lt;List&lt;ReadStatusDto&gt;&gt; findAllByUserId(
+      @RequestParam(&quot;userId&quot;) UUID userId) {
+<span class="nc" id="L53">    log.info(&quot;사용자별 읽음 상태 목록 조회 요청: userId={}&quot;, userId);</span>
+<span class="nc" id="L54">    List&lt;ReadStatusDto&gt; readStatuses = readStatusService.findAllByUserId(userId);</span>
+<span class="nc" id="L55">    log.debug(&quot;사용자별 읽음 상태 목록 조회 응답: count={}&quot;, readStatuses.size());</span>
+<span class="nc" id="L56">    return ResponseEntity</span>
+<span class="nc" id="L57">        .status(HttpStatus.OK)</span>
+<span class="nc" id="L58">        .body(readStatuses);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

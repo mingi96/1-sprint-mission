@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BasicAuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.service.basic</a> &gt; <span class="el_source">BasicAuthService.java</span></div><h1>BasicAuthService.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.service.basic;
+
+import com.sprint.mission.discodeit.dto.data.UserDto;
+import com.sprint.mission.discodeit.dto.request.LoginRequest;
+import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
+import com.sprint.mission.discodeit.exception.user.InvalidCredentialsException;
+import com.sprint.mission.discodeit.mapper.UserMapper;
+import com.sprint.mission.discodeit.repository.UserRepository;
+import com.sprint.mission.discodeit.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@RequiredArgsConstructor
+@Service
+<span class="fc" id="L18">@Slf4j</span>
+public class BasicAuthService implements AuthService {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    @Transactional(readOnly = true)
+    @Override
+    public UserDto login(LoginRequest loginRequest) {
+<span class="nc" id="L26">        log.debug(&quot;로그인 시도: username={}&quot;, loginRequest.username());</span>
+
+<span class="nc" id="L28">        String username = loginRequest.username();</span>
+<span class="nc" id="L29">        String password = loginRequest.password();</span>
+
+<span class="nc" id="L31">        User user = userRepository.findByUsername(username)</span>
+<span class="nc" id="L32">                .orElseThrow(() -&gt; UserNotFoundException.withUsername(username));</span>
+
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (!user.getPassword().equals(password)) {</span>
+<span class="nc" id="L35">            throw InvalidCredentialsException.wrongPassword();</span>
+        }
+
+<span class="nc" id="L38">        log.info(&quot;로그인 성공: userId={}, username={}&quot;, user.getId(), username);</span>
+<span class="nc" id="L39">        return userMapper.toDto(user);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.sprint.mission.discodeit.storage.s3.S3BinaryContentStorageTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-04-09T10:28:38" hostname="DESKTOP-II5CQBB" time="1.078">
+  <properties/>
+  <testcase name="download_should_redirect_with_presigned_url()" classname="com.sprint.mission.discodeit.storage.s3.S3BinaryContentStorageTest" time="1.078"/>
+  <system-out><![CDATA[19:28:24.595 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.sprint.mission.discodeit.storage.s3.S3BinaryContentStorageTest]: S3BinaryContentStorageTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+19:28:24.823 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.sprint.mission.discodeit.DiscodeitApplication for test class com.sprint.mission.discodeit.storage.s3.S3BinaryContentStorageTest
+19:28:24,357 |-INFO in ch.qos.logback.classic.LoggerContext[default] - This is logback-classic version 1.5.12
+19:28:24,365 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Here is a list of configurators discovered as a service, by rank: 
+19:28:24,365 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 -   org.springframework.boot.logging.logback.RootLogLevelConfigurator
+19:28:24,365 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - They will be invoked in order until ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY is returned.
+19:28:24,365 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Constructed configurator of type class org.springframework.boot.logging.logback.RootLogLevelConfigurator
+19:28:24,374 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - org.springframework.boot.logging.logback.RootLogLevelConfigurator.configure() call lasted 1 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
+19:28:24,374 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Trying to configure with ch.qos.logback.classic.joran.SerializedModelConfigurator
+19:28:24,376 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Constructed configurator of type class ch.qos.logback.classic.joran.SerializedModelConfigurator
+19:28:24,378 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.scmo]
+19:28:24,379 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.scmo]
+19:28:24,379 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - ch.qos.logback.classic.joran.SerializedModelConfigurator.configure() call lasted 3 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
+19:28:24,379 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Trying to configure with ch.qos.logback.classic.util.DefaultJoranConfigurator
+19:28:24,380 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Constructed configurator of type class ch.qos.logback.classic.util.DefaultJoranConfigurator
+19:28:24,381 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
+19:28:24,382 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.xml]
+19:28:24,382 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - ch.qos.logback.classic.util.DefaultJoranConfigurator.configure() call lasted 2 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
+19:28:24,382 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Trying to configure with ch.qos.logback.classic.BasicConfigurator
+19:28:24,385 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - Constructed configurator of type class ch.qos.logback.classic.BasicConfigurator
+19:28:24,385 |-INFO in ch.qos.logback.classic.BasicConfigurator@4ede035e - Setting up default configuration.
+19:28:24,416 |-INFO in ch.qos.logback.classic.util.ContextInitializer@16f34376 - ch.qos.logback.classic.BasicConfigurator.configure() call lasted 31 milliseconds. ExecutionStatus=NEUTRAL
+19:28:25,577 |-WARN in ch.qos.logback.core.joran.action.ConversionRuleAction - [converterClass] attribute is deprecated and replaced by [class]. See element [conversionRule] near line 4
+19:28:25,660 |-INFO in ch.qos.logback.core.model.processor.ConversionRuleModelHandler - registering conversion word clr with class [org.springframework.boot.logging.logback.ColorConverter]
+19:28:25,674 |-INFO in ch.qos.logback.core.model.processor.AppenderModelHandler - Processing appender named [CONSOLE]
+19:28:25,674 |-INFO in ch.qos.logback.core.model.processor.AppenderModelHandler - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+19:28:25,682 |-INFO in ch.qos.logback.core.model.processor.ImplicitModelHandler - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+19:28:25,684 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@43756cb - value "%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%-5level) %-36logger{36} [%X{requestId} | %X{requestMethod} | %X{requestUri}] - %msg%n" substituted for "${LOG_PATTERN}"
+19:28:25,730 |-INFO in ch.qos.logback.core.model.processor.AppenderModelHandler - Processing appender named [FILE]
+19:28:25,730 |-INFO in ch.qos.logback.core.model.processor.AppenderModelHandler - About to instantiate appender of type [ch.qos.logback.core.rolling.RollingFileAppender]
+19:28:25,736 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@43756cb - value ".logs/application.log" substituted for "${LOG_FILE_PATH}/${LOG_FILE_NAME}.log"
+19:28:25,736 |-INFO in ch.qos.logback.core.model.processor.ImplicitModelHandler - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+19:28:25,736 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@43756cb - value "%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%-5level) %-36logger{36} [%X{requestId} | %X{requestMethod} | %X{requestUri}] - %msg%n" substituted for "${LOG_PATTERN}"
+19:28:25,741 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@43756cb - value ".logs/application.%d{yyyy-MM-dd}.log" substituted for "${LOG_FILE_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.log"
+19:28:25,746 |-INFO in c.q.l.core.rolling.TimeBasedRollingPolicy@1114822863 - No compression will be used
+19:28:25,747 |-INFO in c.q.l.core.rolling.TimeBasedRollingPolicy@1114822863 - Will use the pattern .logs/application.%d{yyyy-MM-dd}.log for the active file
+19:28:25,752 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - The date pattern is 'yyyy-MM-dd' from file name pattern '.logs/application.%d{yyyy-MM-dd}.log'.
+19:28:25,752 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - Roll-over at midnight.
+19:28:25,754 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - Setting initial period to 2025-04-09T10:26:26.449Z
+19:28:25,758 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - Active log file name: .logs/application.log
+19:28:25,758 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - File property is set to [.logs/application.log]
+19:28:25,760 |-INFO in ch.qos.logback.core.model.processor.AppenderRefModelHandler - Attaching appender named [CONSOLE] to Logger[ROOT]
+19:28:25,760 |-INFO in ch.qos.logback.core.model.processor.AppenderRefModelHandler - Attaching appender named [FILE] to Logger[ROOT]
+19:28:25,760 |-INFO in ch.qos.logback.core.model.processor.DefaultProcessor@4e96cb04 - End of configuration.
+19:28:25,761 |-INFO in org.springframework.boot.logging.logback.SpringBootJoranConfigurator@70ecf57b - Registering current configuration as safe fallback point
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.0)
+
+25-04-09 19:28:25.839 [background-preinit] INFO  o.h.validator.internal.util.Version  [ |  | ] - HV000001: Hibernate Validator 8.0.1.Final
+25-04-09 19:28:25.911 [Test worker] INFO  c.s.m.d.s.s.S3BinaryContentStorageTest [ |  | ] - Starting S3BinaryContentStorageTest using Java 17.0.13 with PID 30084 (started by min in C:\Users\min\IdeaProjects\sprint-mission\1-sprint-mission)
+25-04-09 19:28:25.912 [Test worker] DEBUG c.s.m.d.s.s.S3BinaryContentStorageTest [ |  | ] - Running with Spring Boot v3.4.0, Spring v6.2.0
+25-04-09 19:28:25.913 [Test worker] INFO  c.s.m.d.s.s.S3BinaryContentStorageTest [ |  | ] - The following 1 profile is active: "dev"
+25-04-09 19:28:27.902 [Test worker] INFO  o.s.d.r.c.RepositoryConfigurationDelegate [ |  | ] - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+25-04-09 19:28:28.089 [Test worker] INFO  o.s.d.r.c.RepositoryConfigurationDelegate [ |  | ] - Finished Spring Data repository scanning in 171 ms. Found 6 JPA repository interfaces.
+25-04-09 19:28:29.106 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource   [ |  | ] - HikariPool-1 - Starting...
+25-04-09 19:28:29.455 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool    [ |  | ] - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3eb60858
+25-04-09 19:28:29.461 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource   [ |  | ] - HikariPool-1 - Start completed.
+25-04-09 19:28:29.661 [Test worker] INFO  o.h.jpa.internal.util.LogHelper      [ |  | ] - HHH000204: Processing PersistenceUnitInfo [name: default]
+25-04-09 19:28:29.816 [Test worker] INFO  org.hibernate.Version                [ |  | ] - HHH000412: Hibernate ORM core version 6.6.2.Final
+25-04-09 19:28:29.916 [Test worker] INFO  o.h.c.i.RegionFactoryInitiator       [ |  | ] - HHH000026: Second-level cache disabled
+25-04-09 19:28:30.537 [Test worker] INFO  o.s.o.j.p.SpringPersistenceUnitInfo  [ |  | ] - No LoadTimeWeaver setup: ignoring JPA class transformer
+25-04-09 19:28:30.715 [Test worker] INFO  o.hibernate.orm.connections.pooling  [ |  | ] - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+25-04-09 19:28:32.702 [Test worker] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   [ |  | ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+25-04-09 19:28:32.744 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    set client_min_messages = WARNING
+25-04-09 19:28:32.746 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists message_attachments 
+       drop constraint if exists FKrodngy1gmksoxo65eursdfx4u
+25-04-09 19:28:32.746 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists message_attachments 
+       drop constraint if exists FKj7twd218e2gqw9cmlhwvo1rth
+25-04-09 19:28:32.747 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists messages 
+       drop constraint if exists FKowtlim26svclkatusptbgi7u1
+25-04-09 19:28:32.747 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists messages 
+       drop constraint if exists FK3u3ckbhwq9se1cmopk2pq05b2
+25-04-09 19:28:32.747 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists read_statuses 
+       drop constraint if exists FKa38ri44ml4gfdpklx4ahqr8gd
+25-04-09 19:28:32.748 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists read_statuses 
+       drop constraint if exists FKml3k4wr9sj5yxrmj6d0aoib2e
+25-04-09 19:28:32.748 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists user_statuses 
+       drop constraint if exists FK4lfl3ei2ubchgcxrrpo3pw4mm
+25-04-09 19:28:32.749 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists users 
+       drop constraint if exists FKtbudycgrip49xdptogmhfqnso
+25-04-09 19:28:32.749 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    drop table if exists binary_contents cascade
+25-04-09 19:28:32.750 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    drop table if exists channels cascade
+25-04-09 19:28:32.750 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    drop table if exists message_attachments cascade
+25-04-09 19:28:32.751 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    drop table if exists messages cascade
+25-04-09 19:28:32.751 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    drop table if exists read_statuses cascade
+25-04-09 19:28:32.752 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    drop table if exists user_statuses cascade
+25-04-09 19:28:32.752 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    drop table if exists users cascade
+25-04-09 19:28:32.761 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    create table binary_contents (
+        created_at timestamp with time zone not null,
+        size bigint not null,
+        id uuid not null,
+        content_type varchar(100) not null,
+        file_name varchar(255) not null,
+        primary key (id)
+    )
+25-04-09 19:28:32.769 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    create table channels (
+        created_at timestamp with time zone not null,
+        updated_at timestamp with time zone,
+        id uuid not null,
+        description varchar(255),
+        name varchar(255) not null,
+        type varchar(255) not null check (type in ('PUBLIC','PRIVATE')),
+        primary key (id)
+    )
+25-04-09 19:28:32.775 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    create table message_attachments (
+        attachments_id uuid not null unique,
+        message_id uuid not null
+    )
+25-04-09 19:28:32.779 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    create table messages (
+        created_at timestamp with time zone not null,
+        updated_at timestamp with time zone,
+        author_id uuid,
+        channel_id uuid not null,
+        id uuid not null,
+        content text not null,
+        primary key (id)
+    )
+25-04-09 19:28:32.784 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    create table read_statuses (
+        created_at timestamp with time zone not null,
+        last_read_at timestamp with time zone not null,
+        updated_at timestamp with time zone,
+        channel_id uuid not null,
+        id uuid not null,
+        user_id uuid not null,
+        primary key (id),
+        unique (user_id, channel_id)
+    )
+25-04-09 19:28:32.789 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    create table user_statuses (
+        created_at timestamp with time zone not null,
+        last_active_at timestamp with time zone not null,
+        updated_at timestamp with time zone,
+        id uuid not null,
+        user_id uuid not null unique,
+        primary key (id)
+    )
+25-04-09 19:28:32.794 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    create table users (
+        created_at timestamp with time zone not null,
+        updated_at timestamp with time zone,
+        id uuid not null,
+        profile_id uuid unique,
+        username varchar(50) not null unique,
+        password varchar(60) not null,
+        email varchar(100) not null unique,
+        primary key (id)
+    )
+25-04-09 19:28:32.801 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists message_attachments 
+       add constraint FKrodngy1gmksoxo65eursdfx4u 
+       foreign key (attachments_id) 
+       references binary_contents
+25-04-09 19:28:32.803 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists message_attachments 
+       add constraint FKj7twd218e2gqw9cmlhwvo1rth 
+       foreign key (message_id) 
+       references messages
+25-04-09 19:28:32.805 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists messages 
+       add constraint FKowtlim26svclkatusptbgi7u1 
+       foreign key (author_id) 
+       references users
+25-04-09 19:28:32.807 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists messages 
+       add constraint FK3u3ckbhwq9se1cmopk2pq05b2 
+       foreign key (channel_id) 
+       references channels
+25-04-09 19:28:32.809 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists read_statuses 
+       add constraint FKa38ri44ml4gfdpklx4ahqr8gd 
+       foreign key (channel_id) 
+       references channels
+25-04-09 19:28:32.811 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists read_statuses 
+       add constraint FKml3k4wr9sj5yxrmj6d0aoib2e 
+       foreign key (user_id) 
+       references users
+25-04-09 19:28:32.812 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists user_statuses 
+       add constraint FK4lfl3ei2ubchgcxrrpo3pw4mm 
+       foreign key (user_id) 
+       references users
+25-04-09 19:28:32.814 [Test worker] DEBUG org.hibernate.SQL                    [ |  | ] - 
+    alter table if exists users 
+       add constraint FKtbudycgrip49xdptogmhfqnso 
+       foreign key (profile_id) 
+       references binary_contents
+25-04-09 19:28:32.822 [Test worker] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean [ |  | ] - Initialized JPA EntityManagerFactory for persistence unit 'default'
+25-04-09 19:28:33.382 [Test worker] INFO  o.s.d.j.r.query.QueryEnhancerFactory [ |  | ] - Hibernate is in classpath; If applicable, HQL parser will be used.
+25-04-09 19:28:36.329 [Test worker] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping [ |  | ] - Adding welcome page: class path resource [static/index.html]
+25-04-09 19:28:37.819 [Test worker] INFO  o.s.b.a.e.web.EndpointLinksResolver  [ |  | ] - Exposing 4 endpoints beneath base path '/actuator'
+25-04-09 19:28:37.925 [Test worker] INFO  c.s.m.d.s.s.S3BinaryContentStorageTest [ |  | ] - Started S3BinaryContentStorageTest in 12.793 seconds (process running for 15.114)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

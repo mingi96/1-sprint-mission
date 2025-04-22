@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChannelController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.controller</a> &gt; <span class="el_source">ChannelController.java</span></div><h1>ChannelController.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.controller;
+
+import com.sprint.mission.discodeit.controller.api.ChannelApi;
+import com.sprint.mission.discodeit.dto.data.ChannelDto;
+import com.sprint.mission.discodeit.dto.request.PrivateChannelCreateRequest;
+import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
+import com.sprint.mission.discodeit.dto.request.PublicChannelUpdateRequest;
+import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.service.ChannelService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(&quot;/api/channels&quot;)
+<span class="fc" id="L23">@Slf4j</span>
+public class ChannelController implements ChannelApi {
+
+  private final ChannelService channelService;
+
+  //  공개 채널 생성
+  @PostMapping(path = &quot;public&quot;)
+  public ResponseEntity&lt;ChannelDto&gt; create(
+      @RequestBody @Valid PublicChannelCreateRequest request) {
+<span class="nc" id="L32">    log.info(&quot;공개 채널 생성 요청: {}&quot;, request);</span>
+
+<span class="nc" id="L34">    ChannelDto createdChannel = channelService.create(request);</span>
+<span class="nc" id="L35">    log.debug(&quot;공개 채널 생성 응답: {}&quot;, createdChannel);</span>
+<span class="nc" id="L36">    return ResponseEntity.status(HttpStatus.CREATED)</span>
+<span class="nc" id="L37">        .body(createdChannel);</span>
+  }
+
+  //  비공개 채널 생성
+  @PostMapping(path = &quot;private&quot;)
+  public ResponseEntity&lt;ChannelDto&gt; create(
+      @RequestBody @Valid PrivateChannelCreateRequest request) {
+<span class="nc" id="L44">    log.info(&quot;비공개 채널 생성 요청: {}&quot;, request);</span>
+
+<span class="nc" id="L46">    ChannelDto createdChannel = channelService.create(request);</span>
+<span class="nc" id="L47">    log.debug(&quot;비공개 채널 생성 응답: {}&quot;, createdChannel);</span>
+<span class="nc" id="L48">    return ResponseEntity.status(HttpStatus.CREATED)</span>
+<span class="nc" id="L49">        .body(createdChannel);</span>
+  }
+
+  //  공개 채널 정보 수정
+  @PatchMapping(path = &quot;{channelId}&quot;)
+  public ResponseEntity&lt;ChannelDto&gt; update(@PathVariable(&quot;channelId&quot;) UUID channelId,
+      @RequestBody @Valid PublicChannelUpdateRequest request) {
+<span class="nc" id="L56">    log.info(&quot;채널 수정 요청: id={}, request={}&quot;,channelId, request);</span>
+
+<span class="nc" id="L58">    ChannelDto updatedChannel = channelService.update(channelId, request);</span>
+<span class="nc" id="L59">    log.debug(&quot;채널 수정 응답: {}&quot;, updatedChannel);</span>
+<span class="nc" id="L60">    return ResponseEntity</span>
+<span class="nc" id="L61">        .status(HttpStatus.OK)</span>
+<span class="nc" id="L62">        .body(updatedChannel);</span>
+  }
+
+  //  채널 삭제
+  @DeleteMapping(path = &quot;{channelId}&quot;)
+  public ResponseEntity&lt;Void&gt; delete(@PathVariable(&quot;channelId&quot;) UUID channelId) {
+<span class="nc" id="L68">    log.info(&quot;채널 삭제 요청: channelId={}&quot;, channelId);</span>
+
+<span class="nc" id="L70">    channelService.delete(channelId);</span>
+<span class="nc" id="L71">    log.debug(&quot;채널 삭제 완료&quot;);</span>
+<span class="nc" id="L72">    return ResponseEntity</span>
+<span class="nc" id="L73">            .status(HttpStatus.NO_CONTENT)</span>
+<span class="nc" id="L74">            .build();</span>
+  }
+
+  //  특정 사용자가 볼 수 있는 모든 채널 목록 조회
+  @GetMapping
+  public ResponseEntity&lt;List&lt;ChannelDto&gt;&gt; findAll(@RequestParam(&quot;userId&quot;) UUID userId) {
+<span class="nc" id="L80">    log.info(&quot;사용자별 채널 목록 조회 요청: userId={}&quot;, userId);</span>
+<span class="nc" id="L81">    List&lt;ChannelDto&gt; channels = channelService.findAllByUserId(userId);</span>
+<span class="nc" id="L82">    log.debug(&quot;사용자별 채널 목록 조회 응답: count={}&quot;, channels.size());</span>
+<span class="nc" id="L83">    return ResponseEntity</span>
+<span class="nc" id="L84">        .status(HttpStatus.OK)</span>
+<span class="nc" id="L85">        .body(channels);</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

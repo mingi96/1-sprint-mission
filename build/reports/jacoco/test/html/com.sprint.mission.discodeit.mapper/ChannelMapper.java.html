@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChannelMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.mapper</a> &gt; <span class="el_source">ChannelMapper.java</span></div><h1>ChannelMapper.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.mapper;
+
+import com.sprint.mission.discodeit.dto.data.ChannelDto;
+import com.sprint.mission.discodeit.dto.data.UserDto;
+import com.sprint.mission.discodeit.entity.*;
+import com.sprint.mission.discodeit.repository.MessageRepository;
+import com.sprint.mission.discodeit.repository.ReadStatusRepository;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+@Mapper(componentModel = &quot;spring&quot;, uses = {UserMapper.class})
+<span class="fc" id="L17">public abstract class ChannelMapper {</span>
+
+    @Autowired
+    private MessageRepository messageRepository;
+
+    @Autowired
+    private ReadStatusRepository readStatusRepository;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Mapping(target = &quot;participants&quot;, expression = &quot;java(resolveParticipants(channel))&quot;)
+    @Mapping(target = &quot;lastMessageAt&quot;, expression = &quot;java(resolveLastMessageAt(channel))&quot;)
+    abstract public ChannelDto toDto(Channel channel);
+
+    protected Instant resolveLastMessageAt(Channel channel) {
+<span class="nc" id="L33">        return messageRepository.findLastMessageAtByChannelId(</span>
+<span class="nc" id="L34">                channel.getId())</span>
+<span class="nc" id="L35">                .orElse(Instant.MIN);</span>
+    }
+
+    protected List&lt;UserDto&gt; resolveParticipants(Channel channel) {
+<span class="nc" id="L39">        List&lt;UserDto&gt; participants = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (channel.getType().equals(ChannelType.PRIVATE)) {</span>
+<span class="nc" id="L41">            readStatusRepository.findAllByChannelIdWithUser(channel.getId())</span>
+<span class="nc" id="L42">                    .stream()</span>
+<span class="nc" id="L43">                    .map(ReadStatus::getUser)</span>
+<span class="nc" id="L44">                    .map(userMapper::toDto)</span>
+<span class="nc" id="L45">                    .forEach(participants::add);</span>
+        }
+<span class="nc" id="L47">        return participants;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BasicMessageService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.service.basic</a> &gt; <span class="el_source">BasicMessageService.java</span></div><h1>BasicMessageService.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.service.basic;
+
+import com.sprint.mission.discodeit.dto.data.MessageDto;
+import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
+import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
+import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.dto.response.PageResponse;
+import com.sprint.mission.discodeit.entity.BinaryContent;
+import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.exception.message.MessageNotFoundException;
+import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
+import com.sprint.mission.discodeit.mapper.MessageMapper;
+import com.sprint.mission.discodeit.mapper.PageResponseMapper;
+import com.sprint.mission.discodeit.repository.BinaryContentRepository;
+import com.sprint.mission.discodeit.repository.ChannelRepository;
+import com.sprint.mission.discodeit.repository.MessageRepository;
+import com.sprint.mission.discodeit.repository.UserRepository;
+import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L34">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class BasicMessageService implements MessageService {
+
+  private final MessageRepository messageRepository;
+  private final ChannelRepository channelRepository;
+  private final UserRepository userRepository;
+  private final MessageMapper messageMapper;
+  private final BinaryContentStorage binaryContentStorage;
+  private final BinaryContentRepository binaryContentRepository;
+  private final PageResponseMapper pageResponseMapper;
+
+  @Transactional
+  @Override
+  public MessageDto create(MessageCreateRequest messageCreateRequest,
+                           List&lt;BinaryContentCreateRequest&gt; binaryContentCreateRequests) {
+<span class="nc" id="L51">    log.debug(&quot;메시지 생성 시작: request={}&quot;, messageCreateRequest);</span>
+<span class="nc" id="L52">    UUID channelId = messageCreateRequest.channelId();</span>
+<span class="nc" id="L53">    UUID authorId = messageCreateRequest.authorId();</span>
+
+<span class="nc" id="L55">    Channel channel = channelRepository.findById(channelId)</span>
+<span class="nc" id="L56">            .orElseThrow(() -&gt; ChannelNotFoundException.withId(channelId));</span>
+<span class="nc" id="L57">    User author = userRepository.findById(authorId)</span>
+<span class="nc" id="L58">            .orElseThrow(() -&gt; UserNotFoundException.withId(authorId));</span>
+
+<span class="nc" id="L60">    List&lt;BinaryContent&gt; attachments = binaryContentCreateRequests.stream()</span>
+<span class="nc" id="L61">            .map(attachmentRequest -&gt; {</span>
+<span class="nc" id="L62">              String fileName = attachmentRequest.fileName();</span>
+<span class="nc" id="L63">              String contentType = attachmentRequest.contentType();</span>
+<span class="nc" id="L64">              byte[] bytes = attachmentRequest.bytes();</span>
+
+<span class="nc" id="L66">              BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,</span>
+                      contentType);
+<span class="nc" id="L68">              binaryContentRepository.save(binaryContent);</span>
+<span class="nc" id="L69">              binaryContentStorage.put(binaryContent.getId(), bytes);</span>
+<span class="nc" id="L70">              return binaryContent;</span>
+            })
+<span class="nc" id="L72">            .toList();</span>
+
+<span class="nc" id="L74">    String content = messageCreateRequest.content();</span>
+<span class="nc" id="L75">    Message message = new Message(</span>
+            content,
+            channel,
+            author,
+            attachments
+    );
+
+<span class="nc" id="L82">    messageRepository.save(message);</span>
+<span class="nc" id="L83">    log.info(&quot;메시지 생성 완료: id={}, channelId={}&quot;, message.getId(), channelId);</span>
+<span class="nc" id="L84">    return messageMapper.toDto(message);</span>
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public MessageDto find(UUID messageId) {
+<span class="nc" id="L90">    return messageRepository.findById(messageId)</span>
+<span class="nc" id="L91">            .map(messageMapper::toDto)</span>
+<span class="nc" id="L92">            .orElseThrow(() -&gt; MessageNotFoundException.withId(messageId));</span>
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public PageResponse&lt;MessageDto&gt; findAllByChannelId(UUID channelId, Instant createAt,
+                                                     Pageable pageable) {
+<span class="nc" id="L99">    Slice&lt;MessageDto&gt; slice = messageRepository.findAllByChannelIdWithAuthor(channelId,</span>
+<span class="nc" id="L100">                    Optional.ofNullable(createAt).orElse(Instant.now()),</span>
+                    pageable)
+<span class="nc" id="L102">            .map(messageMapper::toDto);</span>
+
+<span class="nc" id="L104">    Instant nextCursor = null;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">    if (!slice.getContent().isEmpty()) {</span>
+<span class="nc" id="L106">      nextCursor = slice.getContent().get(slice.getContent().size() - 1)</span>
+<span class="nc" id="L107">              .createdAt();</span>
+    }
+
+<span class="nc" id="L110">    return pageResponseMapper.fromSlice(slice, nextCursor);</span>
+  }
+
+  @Transactional
+  @Override
+  public MessageDto update(UUID messageId, MessageUpdateRequest request) {
+<span class="nc" id="L116">    log.debug(&quot;메시지 수정 시작: id={}, request={}&quot;, messageId, request);</span>
+<span class="nc" id="L117">    Message message = messageRepository.findById(messageId)</span>
+<span class="nc" id="L118">            .orElseThrow(() -&gt; MessageNotFoundException.withId(messageId));</span>
+
+<span class="nc" id="L120">    message.update(request.newContent());</span>
+<span class="nc" id="L121">    log.info(&quot;메시지 수정 완료: id={}, channelId={}&quot;, messageId, message.getChannel().getId());</span>
+<span class="nc" id="L122">    return messageMapper.toDto(message);</span>
+  }
+
+  @Transactional
+  @Override
+  public void delete(UUID messageId) {
+<span class="nc" id="L128">    log.debug(&quot;메시지 삭제 시작: id={}&quot;, messageId);</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">    if (!messageRepository.existsById(messageId)) {</span>
+<span class="nc" id="L130">      throw MessageNotFoundException.withId(messageId);</span>
+    }
+<span class="nc" id="L132">    messageRepository.deleteById(messageId);</span>
+<span class="nc" id="L133">    log.info(&quot;메시지 삭제 완료: id={}&quot;, messageId);</span>
+<span class="nc" id="L134">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

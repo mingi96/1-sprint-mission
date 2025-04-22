@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AWSS3Test.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.storage.s3</a> &gt; <span class="el_source">AWSS3Test.java</span></div><h1>AWSS3Test.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.storage.s3;
+
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+
+<span class="nc" id="L20">public class AWSS3Test {</span>
+
+    private static AwsS3Properties props;
+    private static S3Client s3Client;
+    private static S3Presigner presigner;
+
+    public static void main(String[] args) {
+        try {
+<span class="nc" id="L28">            loadProperties();</span>
+
+<span class="nc" id="L30">            s3Client = S3Client.builder()</span>
+<span class="nc" id="L31">                    .region(Region.of(props.getRegion()))</span>
+<span class="nc" id="L32">                    .credentialsProvider(StaticCredentialsProvider.create(</span>
+<span class="nc" id="L33">                            AwsBasicCredentials.create(props.getAccessKey(), props.getSecretKey())</span>
+                    ))
+<span class="nc" id="L35">                    .build();</span>
+
+<span class="nc" id="L37">            presigner = S3Presigner.builder()</span>
+<span class="nc" id="L38">                    .region(Region.of(props.getRegion()))</span>
+<span class="nc" id="L39">                    .credentialsProvider(StaticCredentialsProvider.create(</span>
+<span class="nc" id="L40">                            AwsBasicCredentials.create(props.getAccessKey(), props.getSecretKey())</span>
+                    ))
+<span class="nc" id="L42">                    .build();</span>
+
+<span class="nc" id="L44">            uploadTest();</span>
+<span class="nc" id="L45">            downloadTest();</span>
+<span class="nc" id="L46">            presignedUrlTest();</span>
+
+<span class="nc" id="L48">        } catch (Exception e) {</span>
+<span class="nc" id="L49">            e.printStackTrace();</span>
+<span class="nc" id="L50">        }</span>
+<span class="nc" id="L51">    }</span>
+
+    private static void loadProperties() {
+<span class="nc" id="L54">        props = new AwsS3Properties();</span>
+<span class="nc" id="L55">        props.setAccessKey(System.getenv(&quot;AWS_S3_ACCESS_KEY&quot;));</span>
+<span class="nc" id="L56">        props.setSecretKey(System.getenv(&quot;AWS_S3_SECRET_KEY&quot;));</span>
+<span class="nc" id="L57">        props.setRegion(System.getenv(&quot;AWS_S3_REGION&quot;));</span>
+<span class="nc" id="L58">        props.setBucket(System.getenv(&quot;AWS_S3_BUCKET&quot;));</span>
+<span class="nc" id="L59">        props.setPresignedUrlExpiration(600);</span>
+<span class="nc" id="L60">    }</span>
+
+    private static void uploadTest() throws IOException {
+<span class="nc" id="L63">        String key = &quot;test-upload.txt&quot;;</span>
+<span class="nc" id="L64">        Path path = Paths.get(&quot;test-upload.txt&quot;);</span>
+
+        // 파일 없으면 자동 생성 (테스트용)
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (!Files.exists(path)) {</span>
+<span class="nc" id="L68">            Files.writeString(path, &quot;안녕하세요! AWS S3 테스트 파일입니다.&quot;);</span>
+        }
+
+<span class="nc" id="L71">        PutObjectRequest request = PutObjectRequest.builder()</span>
+<span class="nc" id="L72">                .bucket(props.getBucket())</span>
+<span class="nc" id="L73">                .key(key)</span>
+<span class="nc" id="L74">                .build();</span>
+
+<span class="nc" id="L76">        s3Client.putObject(request, RequestBody.fromFile(path));</span>
+
+<span class="nc" id="L78">        System.out.println(&quot;✅ 업로드 완료: &quot; + key);</span>
+<span class="nc" id="L79">    }</span>
+
+    private static void downloadTest() throws IOException {
+<span class="nc" id="L82">        String key = &quot;test-upload.txt&quot;;</span>
+<span class="nc" id="L83">        String downloadPath = &quot;downloaded.txt&quot;;</span>
+
+<span class="nc" id="L85">        Path path = Path.of(downloadPath);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (Files.exists(path)) {</span>
+<span class="nc" id="L87">            Files.delete(path);</span>
+        }
+
+<span class="nc" id="L90">        GetObjectRequest getRequest = GetObjectRequest.builder()</span>
+<span class="nc" id="L91">                .bucket(props.getBucket())</span>
+<span class="nc" id="L92">                .key(key)</span>
+<span class="nc" id="L93">                .build();</span>
+
+<span class="nc" id="L95">        s3Client.getObject(getRequest, Paths.get(downloadPath));</span>
+<span class="nc" id="L96">        System.out.println(&quot;✅ 다운로드 완료: &quot; + downloadPath);</span>
+<span class="nc" id="L97">    }</span>
+
+    private static void presignedUrlTest() {
+<span class="nc" id="L100">        String key = &quot;test-upload.txt&quot;;</span>
+
+<span class="nc" id="L102">        GetObjectRequest getObjectRequest = GetObjectRequest.builder()</span>
+<span class="nc" id="L103">                .bucket(props.getBucket())</span>
+<span class="nc" id="L104">                .key(key)</span>
+<span class="nc" id="L105">                .build();</span>
+
+<span class="nc" id="L107">        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()</span>
+<span class="nc" id="L108">                .getObjectRequest(getObjectRequest)</span>
+<span class="nc" id="L109">                .signatureDuration(Duration.ofSeconds(props.getPresignedUrlExpiration()))</span>
+<span class="nc" id="L110">                .build();</span>
+
+<span class="nc" id="L112">        URL url = presigner.presignGetObject(presignRequest).url();</span>
+<span class="nc" id="L113">        System.out.println(&quot;✅ Presigned URL: &quot; + url);</span>
+<span class="nc" id="L114">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

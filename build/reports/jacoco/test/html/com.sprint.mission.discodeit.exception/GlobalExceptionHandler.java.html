@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.exception;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="fc" id="L14">@Slf4j</span>
+@RestControllerAdvice
+<span class="fc" id="L16">public class GlobalExceptionHandler {</span>
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleException(Exception e) {
+<span class="nc" id="L20">        log.error(&quot;예상치 못한 오류 발생: {}&quot;, e.getMessage(), e);</span>
+<span class="nc" id="L21">        ErrorResponse errorResponse = new ErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR.value());</span>
+<span class="nc" id="L22">        return ResponseEntity</span>
+<span class="nc" id="L23">                .status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L24">                .body(errorResponse);</span>
+    }
+
+    @ExceptionHandler(DiscodeitException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleDiscodeitException(DiscodeitException exception) {
+<span class="nc" id="L29">        log.error(&quot;커스텀 예외 발생: code={}, message={}&quot;, exception.getErrorCode(), exception.getMessage(), exception);</span>
+<span class="nc" id="L30">        HttpStatus status = determineHttpStatus(exception);</span>
+<span class="nc" id="L31">        ErrorResponse response = new ErrorResponse(exception, status.value());</span>
+<span class="nc" id="L32">        return ResponseEntity</span>
+<span class="nc" id="L33">                .status(status)</span>
+<span class="nc" id="L34">                .body(response);</span>
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleValidationExceptions(MethodArgumentNotValidException ex) {
+<span class="nc" id="L39">        log.error(&quot;요청 유효성 검사 실패: {}&quot;, ex.getMessage());</span>
+
+<span class="nc" id="L41">        Map&lt;String, Object&gt; validationErrors = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L42">        ex.getBindingResult().getAllErrors().forEach(error -&gt; {</span>
+<span class="nc" id="L43">            String fieldName = ((FieldError) error).getField();</span>
+<span class="nc" id="L44">            String errorMessage = error.getDefaultMessage();</span>
+<span class="nc" id="L45">            validationErrors.put(fieldName, errorMessage);</span>
+<span class="nc" id="L46">        });</span>
+<span class="nc" id="L47">        ErrorResponse response = new ErrorResponse(</span>
+<span class="nc" id="L48">                Instant.now(),</span>
+                &quot;VALIDATION_ERROR&quot;,
+                &quot;요청 데이터 유효성 검사에 실패했습니다&quot;,
+                validationErrors,
+<span class="nc" id="L52">                ex.getClass().getSimpleName(),</span>
+<span class="nc" id="L53">                HttpStatus.BAD_REQUEST.value()</span>
+        );
+
+<span class="nc" id="L56">        return ResponseEntity</span>
+<span class="nc" id="L57">                .status(HttpStatus.BAD_REQUEST)</span>
+<span class="nc" id="L58">                .body(response);</span>
+    }
+
+    private HttpStatus determineHttpStatus(DiscodeitException exception) {
+<span class="nc" id="L62">        ErrorCode errorCode = exception.getErrorCode();</span>
+<span class="nc bnc" id="L63" title="All 5 branches missed.">        return switch (errorCode) {</span>
+            case USER_NOT_FOUND, CHANNEL_NOT_FOUND, MESSAGE_NOT_FOUND, BINARY_CONTENT_NOT_FOUND,
+<span class="nc" id="L65">                 READ_STATUS_NOT_FOUND, USER_STATUS_NOT_FOUND -&gt; HttpStatus.NOT_FOUND;</span>
+<span class="nc" id="L66">            case DUPLICATE_USER, DUPLICATE_READ_STATUS, DUPLICATE_USER_STATUS -&gt; HttpStatus.CONFLICT;</span>
+<span class="nc" id="L67">            case INVALID_USER_CREDENTIALS -&gt; HttpStatus.UNAUTHORIZED;</span>
+<span class="nc" id="L68">            case PRIVATE_CHANNEL_UPDATE, INVALID_REQUEST -&gt; HttpStatus.BAD_REQUEST;</span>
+<span class="nc" id="L69">            case INTERNAL_SERVER_ERROR -&gt; HttpStatus.INTERNAL_SERVER_ERROR;</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

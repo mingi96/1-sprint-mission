@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">1-sprint-misson</a> &gt; <a href="index.source.html" class="el_package">com.sprint.mission.discodeit.entity</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.sprint.mission.discodeit.entity;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sprint.mission.discodeit.entity.base.BaseUpdatableEntity;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = &quot;users&quot;)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User extends BaseUpdatableEntity {
+
+  @Column(length = 50, nullable = false, unique = true)
+  private String username;
+
+  @Column(length = 100, nullable = false, unique = true)
+  private String email;
+
+  @Column(length = 60, nullable = false)
+  private String password;
+
+  // User → BinaryContent (프로필) 1:1 단방향 (부모: User, 자식: BinaryContent)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @JoinColumn(name = &quot;profile_id&quot;, columnDefinition = &quot;uuid&quot;)
+  private BinaryContent profile;
+
+  @JsonManagedReference
+  @Setter(AccessLevel.PROTECTED)
+  @OneToOne(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+  private UserStatus status;
+
+<span class="nc" id="L36">  public User(String username, String email, String password, BinaryContent profile) {</span>
+<span class="nc" id="L37">    this.username = username;</span>
+<span class="nc" id="L38">    this.email = email;</span>
+<span class="nc" id="L39">    this.password = password;</span>
+<span class="nc" id="L40">    this.profile = profile;</span>
+<span class="nc" id="L41">  }</span>
+
+  public void update(String newUsername, String newEmail, String newPassword, BinaryContent newProfile) {
+<span class="nc bnc" id="L44" title="All 4 branches missed.">    if (newUsername != null &amp;&amp; !newUsername.equals(this.username)) {</span>
+<span class="nc" id="L45">      this.username = newUsername;</span>
+    }
+<span class="nc bnc" id="L47" title="All 4 branches missed.">    if (newEmail != null &amp;&amp; !newEmail.equals(this.email)) {</span>
+<span class="nc" id="L48">      this.email = newEmail;</span>
+    }
+<span class="nc bnc" id="L50" title="All 4 branches missed.">    if (newPassword != null &amp;&amp; !newPassword.equals(this.password)) {</span>
+<span class="nc" id="L51">      this.password = newPassword;</span>
+    }
+<span class="nc bnc" id="L53" title="All 2 branches missed.">    if (newProfile != null) {</span>
+<span class="nc" id="L54">      this.profile = newProfile;</span>
+    }
+<span class="nc" id="L56">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
